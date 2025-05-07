@@ -27,8 +27,8 @@ import {
                 </SidebarInset>
             </SidebarProvider>
         </div>
-        <div>
+        <!-- <div>
             <mainFooter></mainFooter>
-        </div>
+        </div> -->
     </div>
 </template>

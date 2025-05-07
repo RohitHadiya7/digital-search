@@ -19,13 +19,16 @@ import {
       <div class="flex flex-1">
         <AppSidebar />
         <SidebarInset class="flex-1">
-          <div class="p-3 m-3 h-[calc(100vh-10rem)] border">
+          <div class="p-3 mx-4 my-2 h-[calc(100vh-10rem)] border rounded">
             <router-view />
+          </div>
+          <div class="px-3">
+            <mainFooter />
           </div>
         </SidebarInset>
       </div>
     </SidebarProvider>
-    <mainFooter />
+   
   </div>
 
 </template>

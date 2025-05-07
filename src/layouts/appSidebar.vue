@@ -211,7 +211,7 @@ const data = {
 </script>
 
 <template>
-  <Sidebar v-bind="props" class="pt-20"> 
+  <Sidebar v-bind="props" class="pt-26"> 
     <SidebarHeader class="p-0">
       <strong class="ml-2 text-2xl">Elements</strong>
       <SearchForm />
