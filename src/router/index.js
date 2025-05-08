@@ -4,6 +4,8 @@ import { createRouter, createWebHistory } from 'vue-router'
 // import NotFound from '../pages/other/pageNotFound.vue'
 import DefaultLayout from '@/components/HelloWorld.vue'
 import Dashboard from '@/views/dashboard/index.vue'
+import Project from '@/views/projects/Project.vue'
+import Login from '@/views/Auth/Login.vue'
 
 const routes = [
   {
@@ -11,9 +13,16 @@ const routes = [
     component: DefaultLayout,
     children: [
       { path: '', name: 'Home', component: Dashboard },
-    //   { path: 'about', name: 'About', component: About },
     ],
   },
+  {
+    path: '/login',
+    component: Login
+  },
+  {
+    path: '/project',
+    component: Project
+  }
   // { path: '/:pathMatch(.*)*', name: 'NotFound', component: NotFound }
 ]
 
