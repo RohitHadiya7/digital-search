@@ -1,29 +1,28 @@
 import { createRouter, createWebHistory } from 'vue-router'
 // import Home from '../pages/Home.vue'
 // import About from '../pages/About.vue'
-// import NotFound from '../pages/other/pageNotFound.vue'
+import NotFound from '@/components/pageNotFound.vue'
 import DefaultLayout from '@/components/HelloWorld.vue'
 import Dashboard from '@/views/dashboard/index.vue'
 import Project from '@/views/projects/Project.vue'
 import Login from '@/views/Auth/Login.vue'
+import Gallery from '@/views/Gallery/Gallery.vue'
 
 const routes = [
   {
     path: '/',
     component: DefaultLayout,
     children: [
-      { path: '', name: 'Home', component: Dashboard },
+      { path: '/dashboard', name: 'Home', component: Dashboard },
+      { path: '/project', name: 'Project', component: Project },
+      { path: '/gallery', name: 'Gallery', component: Gallery },
     ],
   },
   {
     path: '/login',
     component: Login
   },
-  {
-    path: '/project',
-    component: Project
-  }
-  // { path: '/:pathMatch(.*)*', name: 'NotFound', component: NotFound }
+  { path: '/:pathMatch(.*)*', name: 'NotFound', component: NotFound }
 ]
 
 const router = createRouter({
