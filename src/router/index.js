@@ -1,11 +1,10 @@
 import { createRouter, createWebHistory } from 'vue-router'
-// import Home from '../pages/Home.vue'
-// import About from '../pages/About.vue'
 import NotFound from '@/components/pageNotFound.vue'
 import DefaultLayout from '@/components/HelloWorld.vue'
 import Dashboard from '@/views/dashboard/index.vue'
 import Project from '@/views/projects/Project.vue'
 import Login from '@/views/Auth/Login.vue'
+import SignUp from '@/views/Auth/SignUp/SignUp.vue'
 import Gallery from '@/views/Gallery/Gallery.vue'
 
 const routes = [
@@ -21,6 +20,10 @@ const routes = [
   {
     path: '/login',
     component: Login
+  },
+  {
+    path: '/signup',
+    component: SignUp
   },
   { path: '/:pathMatch(.*)*', name: 'NotFound', component: NotFound }
 ]
