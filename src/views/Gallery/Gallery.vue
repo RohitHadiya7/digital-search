@@ -7,7 +7,7 @@
 
     <!-- Description and category selector -->
     <div class="flex items-center gap-2 mb-6 flex-wrap md:flex-nowrap">
-      <p class="m-0 text-slate-800">Get going faster with a template from the Trello community or</p>
+      <p class="m-0 text-slate-800">Get going faster with a template from the Search or</p>
       <div class="relative w-full md:w-auto">
         <button
           class="flex items-center gap-2 px-3 py-2 border border-slate-300 rounded-[3px] bg-white cursor-pointer text-slate-800 text-sm min-w-[200px] justify-between hover:bg-slate-100 w-full"
@@ -151,7 +151,7 @@ const popularTemplates = ref([
   {
     id: 1,
     title: 'Basic Board',
-    description: 'A simple board to get started with Trello',
+    description: 'A simple board to get started with Dashboard',
     image: 'https://images.unsplash.com/photo-1579546929518-9e396f3cc809?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxleHBsb3JlLWZlZWR8MXx8fGVufDB8fHx8&w=1000&q=80'
   },
   {
