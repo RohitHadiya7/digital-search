@@ -6,11 +6,13 @@ import Project from '@/views/projects/Project.vue'
 import Login from '@/views/Auth/Login.vue'
 import SignUp from '@/views/Auth/SignUp/SignUp.vue'
 import Gallery from '@/views/Gallery/Gallery.vue'
+import { requireAuth, requireGuest } from './guards.js'
 
 const routes = [
   {
     path: '/',
     component: DefaultLayout,
+    beforeEnter: requireAuth,
     children: [
       { path: '/dashboard', name: 'Home', component: Dashboard },
       { path: '/project', name: 'Project', component: Project },
@@ -19,11 +21,13 @@ const routes = [
   },
   {
     path: '/login',
-    component: Login
+    component: Login,
+    beforeEnter: requireGuest
   },
   {
     path: '/signup',
-    component: SignUp
+    component: SignUp,
+    beforeEnter: requireGuest
   },
   { path: '/:pathMatch(.*)*', name: 'NotFound', component: NotFound }
 ]

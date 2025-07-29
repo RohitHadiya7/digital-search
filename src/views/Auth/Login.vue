@@ -1,6 +1,6 @@
 <script setup>
 import { ref } from 'vue'
-import { useRouter } from 'vue-router'
+import { useAuth } from '@/composables/useAuth.js'
 import {
   PinInput,
   PinInputGroup,
@@ -18,20 +18,49 @@ import {
   CardFooter
 } from '@/components/ui/card'
 
-const router = useRouter()
+const { sendLoginOTP, verifyLoginOTP, loading, error, clearError } = useAuth()
+
 const step = ref(1)
 const phoneNumber = ref('')
 const deviceId = ref('')
 const otpArray = ref([])
 
-const handleSendOtp = () => {
-  step.value = 2
+const handleSendOtp = async () => {
+  console.log('Send OTP clicked!')
+  console.log('Phone:', phoneNumber.value)
+  console.log('Device ID:', deviceId.value)
+  
+  if (!phoneNumber.value || !deviceId.value) {
+    alert('Please fill in all fields')
+    return
+  }
+
+  try {
+    console.log('Calling sendLoginOTP...')
+    await sendLoginOTP(phoneNumber.value, deviceId.value)
+    console.log('OTP sent successfully!')
+    step.value = 2
+    clearError()
+  } catch (err) {
+    console.error('Failed to send OTP:', err)
+    alert(`Error: ${err.message}`)
+  }
 }
 
-const handleVerifyOtp = () => {
+const handleVerifyOtp = async () => {
   const fullOtp = otpArray.value.join('')
-  console.log('OTP:', fullOtp, 'Device ID:', deviceId.value)
-  router.push('/project')
+  
+  if (!fullOtp || !deviceId.value) {
+    alert('Please fill in all fields')
+    return
+  }
+
+  try {
+    await verifyLoginOTP(deviceId.value, fullOtp)
+    clearError()
+  } catch (err) {
+    console.error('Failed to verify OTP:', err)
+  }
 }
 </script>
 
@@ -88,10 +117,19 @@ const handleVerifyOtp = () => {
       </CardContent>
 
       <CardFooter>
-        <Button class="w-full" @click="step === 1 ? handleSendOtp() : handleVerifyOtp()">
-          {{ step === 1 ? 'Send OTP' : 'Verify OTP' }}
+        <Button 
+          class="w-full" 
+          @click="step === 1 ? handleSendOtp() : handleVerifyOtp()"
+          :disabled="loading"
+        >
+          {{ loading ? 'Loading...' : (step === 1 ? 'Send OTP' : 'Verify OTP') }}
         </Button>
       </CardFooter>
+      
+      <!-- Error Display -->
+      <div v-if="error" class="px-6 pb-4">
+        <div class="text-red-500 text-sm">{{ error }}</div>
+      </div>
     </Card>
   </div>
 </template>
