@@ -3,11 +3,11 @@ import sessionService from './session.js'
 
 class AuthService {
   // Send registration OTP - validates unique phone/device
-  async sendRegistrationOTP(phoneNumber, deviceId) {
+  async sendRegistrationOTP(phoneNumber, deviceID) {
     try {
       const response = await api.post('/v1/verify-phone-number', {
         phoneNumber,
-        deviceId
+        deviceID
       })
       return response.data
     } catch (error) {
@@ -20,7 +20,7 @@ class AuthService {
     try {
       const response = await api.post('/v1/verify-phone-otp', {
         otp,
-        deviceId: deviceID 
+        deviceID 
       })
       return response.data
     } catch (error) {
@@ -39,11 +39,11 @@ class AuthService {
   }
 
   // Send login OTP - for registered users only
-  async sendLoginOTP(phoneNumber, deviceId) {
+  async sendLoginOTP(phoneNumber, deviceID) {
     try {
       const response = await api.post('/v1/users/login', {
         phoneNumber,
-        deviceId
+        deviceID
       })
       return response.data
     } catch (error) {
@@ -52,10 +52,10 @@ class AuthService {
   }
 
   // Verify login OTP - returns user data and token
-  async verifyLoginOTP(deviceId, otp) {
+  async verifyLoginOTP(deviceID, otp) {
     try {
       const response = await api.post('/v1/users/verify-login-otp', {
-        deviceId,
+        deviceID,
         otp
       })
       
