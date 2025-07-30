@@ -101,7 +101,7 @@ const handleVerifyOtp = async () => {
             >
               <PinInputGroup class="w-full">
                 <PinInputSlot
-                  v-for="(_, index) in 5"
+                  v-for="(_, index) in 6"
                   :key="index"
                   :index="index"
                   class="w-full"

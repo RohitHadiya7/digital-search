@@ -16,20 +16,31 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
+import {
+  PinInput,
+  PinInputGroup,
+  PinInputSlot
+} from '@/components/ui/pin-input'
 import states from '@/assets/states.json'
 
 const router = useRouter()
-const { register, loading, error, clearError } = useAuth()
+const { sendRegistrationOTP, verifyRegistrationOTP, register, loading, error, clearError } = useAuth()
 
-// Form data
+const step = ref(1)
+const phoneNumber = ref('')
+const deviceId = ref('')
+const otpArray = ref([])
+const verifiedPhoneNumber = ref('') 
+
+
 const formData = ref({
   fullName: '',
   email: '',
-  mobile: '',
+  phoneNumber: '', 
   gender: '',
   govtIDNumber: '',
-  govtIDPhoto: '',
-  photo: '',
+  govtIDPhoto: '', 
+  photo: '', 
   alternatePhoneNumber: '',
   dutyState: '',
   department: '',
@@ -38,13 +49,8 @@ const formData = ref({
   supervisorName: '',
   applicationType: '',
   organizationID: '',
-  deviceID: 'device-123', // Default device ID
-  verificationStatus: 'Pending',
-  verificationVideo: '',
-  oldPhoneNumbers: [],
-  oldDevices: [],
-  payments: [],
-  subscriptions: []
+  deviceID: '', 
+  isActive: false 
 })
 
 const genders = [
@@ -52,25 +58,100 @@ const genders = [
   { value: 'Female', label: 'Female' },
 ]
 
-const handleSignUp = async () => {
-  console.log('Sign up clicked!')
-  console.log('Form data:', formData.value)
+
+const handleFileUpload = (event, fieldName) => {
+  const file = event.target.files[0]
+  if (file) {
+    const reader = new FileReader()
+    reader.onload = (e) => {
+      formData.value[fieldName] = e.target.result 
+      console.log(`${fieldName} uploaded as base64`)
+    }
+    reader.readAsDataURL(file)
+  } else {
+    formData.value[fieldName] = ''
+  }
+}
+
+//Send OTP for phone verification
+const handleSendOtp = async () => {
+  console.log('Send OTP clicked!')
+  console.log('Phone:', phoneNumber.value)
+  console.log('Device ID:', deviceId.value)
   
-  // Validate required fields
-  if (!formData.value.fullName || !formData.value.email || !formData.value.mobile) {
-    alert('Please fill in all required fields')
+  if (!phoneNumber.value || !deviceId.value) {
+    alert('Please fill in phone number and device ID')
+    return
+  }
+
+  
+
+  try {
+    await sendRegistrationOTP(phoneNumber.value, deviceId.value)
+    verifiedPhoneNumber.value = phoneNumber.value 
+    step.value = 2
+    clearError()
+  } catch (err) {
+    alert(`Error: ${err.message}`)
+  }
+}
+
+// Verify OTP
+const handleVerifyOtp = async () => {
+  const fullOtp = otpArray.value.join('')
+  
+  if (!fullOtp || !deviceId.value) {
+    alert('Please enter OTP and device ID')
     return
   }
 
   try {
-    console.log('Calling register...')
-    await register(formData.value)
-    console.log('Registration successful!')
+    await verifyRegistrationOTP(fullOtp, deviceId.value)
+    step.value = 3
+    clearError()
+  } catch (err) {
+    alert(`Error: ${err.message}`)
+  }
+}
+
+// Complete registration
+const handleRegister = async () => {
+  formData.value.phoneNumber = verifiedPhoneNumber.value 
+  formData.value.deviceID = deviceId.value 
+  
+  if (!formData.value.fullName || !formData.value.email || !formData.value.phoneNumber) {
+    alert('Please fill in all required fields')
+    return
+  }
+
+  if (formData.value.phoneNumber !== verifiedPhoneNumber.value || formData.value.deviceID !== deviceId.value) {
+    alert('Phone number and device ID must match the verified OTP')
+    return
+  }
+
+  try {
+    
+    const cleanData = { ...formData.value }
+    
+    if (!cleanData.govtIDPhoto || cleanData.govtIDPhoto === '') {
+      cleanData.govtIDPhoto = 'pending' 
+    }
+    if (!cleanData.photo || cleanData.photo === '') {
+      cleanData.photo = 'pending' 
+    }
+    
+    const optionalFields = ['organizationID']
+    Object.keys(cleanData).forEach(key => {
+      if (cleanData[key] === '' && optionalFields.includes(key)) {
+        delete cleanData[key]
+      }
+    })
+    
+    await register(cleanData)
     alert('Registration successful! Please login.')
     router.push('/login')
     clearError()
   } catch (err) {
-    console.error('Failed to register:', err)
     alert(`Error: ${err.message}`)
   }
 }
@@ -84,13 +165,74 @@ const handleSignUp = async () => {
       <CardHeader>
         <CardTitle class="text-3xl mb-2">Sign Up</CardTitle>
         <CardDescription class="mb-6">
-          Sign up by providing your details
+          <span v-if="step === 1">Enter your phone number and device ID to receive OTP.</span>
+          <span v-else-if="step === 2">Enter the OTP sent to your number.</span>
+          <span v-else>Complete your registration details.</span>
         </CardDescription>
       </CardHeader>
 
       <CardContent>
-        
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-6">
+        <!-- Step 1: Phone Number & Device ID -->
+        <template v-if="step === 1">
+          <div class="grid gap-4">
+            <div class="grid gap-2">
+              <Label for="phone">Phone Number</Label>
+              <Input id="phone" v-model="phoneNumber" placeholder="+91 xxxxxxxx" type="tel" required />
+            </div>
+            <div class="grid gap-2">
+              <Label for="device">Device ID</Label>
+              <Input id="device" v-model="deviceId" placeholder="Device ID" type="text" required />
+            </div>
+          </div>
+        </template>
+
+        <!-- Step 2: OTP Verification -->
+        <template v-else-if="step === 2">
+          <div class="grid gap-4">
+            <div class="grid gap-2">
+              <Label for="otp">OTP</Label>
+              <PinInput
+                id="otp"
+                v-model="otpArray"
+                placeholder="○"
+                @complete="handleVerifyOtp"
+                class="w-full"
+              >
+                              <PinInputGroup class="w-full">
+                <PinInputSlot
+                  v-for="(_, index) in 6"
+                  :key="index"
+                  :index="index"
+                  class="w-full"
+                />
+              </PinInputGroup>
+              </PinInput>
+            </div>
+            <div class="grid gap-2">
+              <Label for="device">Device ID</Label>
+              <Input id="device" v-model="deviceId" placeholder="Device ID" type="text" required />
+            </div>
+          </div>
+        </template>
+
+        <!-- Step 3: Registration Form -->
+        <template v-else>
+          <!-- Verified Info Display -->
+          <div class="mb-6 p-4 bg-green-50 border border-green-200 rounded-lg">
+            <h3 class="text-sm font-semibold text-green-800 mb-2">✓ Verified Information</h3>
+            <div class="grid grid-cols-2 gap-4 text-sm">
+              <div>
+                <span class="font-medium text-gray-600">Phone Number:</span>
+                <span class="ml-2 text-green-700">{{ phoneNumber }}</span>
+              </div>
+              <div>
+                <span class="font-medium text-gray-600">Device ID:</span>
+                <span class="ml-2 text-green-700">{{ deviceId }}</span>
+              </div>
+            </div>
+          </div>
+          
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-6">
           <!-- Full Name -->
           <div class="flex flex-col">
             <Label for="fullname" class="mb-1 font-semibold">Full Name</Label>
@@ -103,10 +245,11 @@ const handleSignUp = async () => {
             <Input id="email" v-model="formData.email" type="email" placeholder="m@example.com" required />
           </div>
 
-          <!-- Mobile Number -->
+          <!-- Mobile Number (Verified - Read Only) -->
           <div class="flex flex-col">
-            <Label for="mobile" class="mb-1 font-semibold">Mobile Number</Label>
-            <Input id="mobile" v-model="formData.mobile" type="tel" placeholder="+91 xxxxxxxxx" required />
+            <Label for="mobile" class="mb-1 font-semibold">Mobile Number (Verified)</Label>
+            <Input id="mobile" :value="verifiedPhoneNumber" type="tel" disabled class="bg-gray-100" />
+            <small class="text-gray-500 text-xs mt-1">This phone number was verified via OTP</small>
           </div>
 
           <!-- Gender -->
@@ -135,13 +278,13 @@ const handleSignUp = async () => {
           <!-- Government ID Photo -->
           <div class="flex flex-col">
             <Label for="govpic" class="mb-1 font-semibold">Government ID Photo</Label>
-            <Input id="govpic" type="file" @change="(e) => formData.govtIDPhoto = e.target.files[0]" />
+            <Input id="govpic" type="file" accept="image/*" @change="handleFileUpload($event, 'govtIDPhoto')" />
           </div>
 
           <!-- Photo -->
           <div class="flex flex-col">
             <Label for="photo" class="mb-1 font-semibold">Photo</Label>
-            <Input id="photo" type="file" @change="(e) => formData.photo = e.target.files[0]" />
+            <Input id="photo" type="file" accept="image/*" @change="handleFileUpload($event, 'photo')" />
           </div>
 
           <!-- Alternate Number -->
@@ -213,15 +356,16 @@ const handleSignUp = async () => {
             <Input id="organization_code" v-model="formData.organizationID" type="text" placeholder="Enter Organization Code" />
           </div>
         </div>
+        </template>
       </CardContent>
 
       <CardFooter class="mt-6">
         <Button 
           class="w-full py-3 text-lg" 
-          @click="handleSignUp"
+          @click="step === 1 ? handleSendOtp() : step === 2 ? handleVerifyOtp() : handleRegister()"
           :disabled="loading"
         >
-          {{ loading ? 'Loading...' : 'Sign Up' }}
+          {{ loading ? 'Loading...' : (step === 1 ? 'Send OTP' : step === 2 ? 'Verify OTP' : 'Complete Registration') }}
         </Button>
       </CardFooter>
       

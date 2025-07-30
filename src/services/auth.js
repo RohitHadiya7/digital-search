@@ -1,7 +1,8 @@
 import api from './api.js'
+import sessionService from './session.js'
 
 class AuthService {
-  // Send registration OTP
+  // Send registration OTP - validates unique phone/device
   async sendRegistrationOTP(phoneNumber, deviceId) {
     try {
       const response = await api.post('/v1/verify-phone-number', {
@@ -19,7 +20,7 @@ class AuthService {
     try {
       const response = await api.post('/v1/verify-phone-otp', {
         otp,
-        deviceID
+        deviceId: deviceID 
       })
       return response.data
     } catch (error) {
@@ -37,24 +38,20 @@ class AuthService {
     }
   }
 
-  // Send login OTP
+  // Send login OTP - for registered users only
   async sendLoginOTP(phoneNumber, deviceId) {
-    console.log('Auth service: sendLoginOTP called with:', { phoneNumber, deviceId })
     try {
-      console.log('Making API call to:', '/v1/users/login')
       const response = await api.post('/v1/users/login', {
         phoneNumber,
         deviceId
       })
-      console.log('API response:', response.data)
       return response.data
     } catch (error) {
-      console.error('Auth service error:', error)
       throw this.handleError(error)
     }
   }
 
-  // Verify login OTP
+  // Verify login OTP - returns user data and token
   async verifyLoginOTP(deviceId, otp) {
     try {
       const response = await api.post('/v1/users/verify-login-otp', {
@@ -65,6 +62,10 @@ class AuthService {
       // Store token if login successful
       if (response.data.token) {
         localStorage.setItem('authToken', response.data.token)
+        // Reset session timeout
+        if (sessionService) {
+          sessionService.resetSession()
+        }
       }
       
       return response.data
@@ -80,7 +81,6 @@ class AuthService {
       localStorage.removeItem('authToken')
       return { success: true }
     } catch (error) {
-      // Even if API call fails, clear local token
       localStorage.removeItem('authToken')
       throw this.handleError(error)
     }
@@ -96,7 +96,7 @@ class AuthService {
     }
   }
 
-  // Update user
+  // Update user - requires auth token
   async updateUser(userId, updateData) {
     try {
       const response = await api.patch(`/v1/users/${userId}`, updateData)
@@ -106,12 +106,13 @@ class AuthService {
     }
   }
 
-  // Delete user
+  // Delete user - requires auth token
   async deleteUser(userId) {
     try {
-      const response = await api.delete(`/api/users/delete/${userId}`)
+      const response = await api.delete(`/v1/users/${userId}`)
       return response.data
     } catch (error) {
+      console.error('Auth service error:', error)
       throw this.handleError(error)
     }
   }

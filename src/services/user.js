@@ -4,19 +4,19 @@ class UserService {
   // Get dropdowns data
   async getDropdowns() {
     try {
-      const response = await api.get('/api/dropdowns')
+      const response = await api.get('/v1/dropdowns')
       return response.data
     } catch (error) {
       throw this.handleError(error)
     }
   }
 
-  // Get single user by ID
+  // Get single user by ID - requires auth token
   async getUserById(userId) {
     try {
-      const response = await api.get(`/api/users/${userId}`)
+      const response = await api.get(`/v1/users/${userId}`)
       return response.data
-    } catch (error) {
+    } catch (error) { 
       throw this.handleError(error)
     }
   }
@@ -45,7 +45,7 @@ class UserService {
     }
   }
 
-  // Error handler
+  
   handleError(error) {
     const message = error.response?.data?.message || error.message || 'An error occurred'
     return new Error(message)
