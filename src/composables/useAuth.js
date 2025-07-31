@@ -141,8 +141,8 @@ const verifyLoginOTPPhone = async (phoneNumber, otp) => {
     } catch (err) {
       error.value = err.message
       // Still logout locally even if API fails
-      user.value = null
-      router.push('/login')
+      // user.value = null
+      // router.push('/login')
     } finally {
       loading.value = false
     }

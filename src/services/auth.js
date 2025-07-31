@@ -117,11 +117,11 @@ async verifyLoginOTPPhone(phoneNumber, otp) {
 // Logout user
   async logout() {
     try {
-      await api.get('/logout-user')
+      await api.post('/v1/logOut');
       localStorage.removeItem('authToken')
       return { success: true }
     } catch (error) {
-      localStorage.removeItem('authToken')
+      // localStorage.removeItem('authToken')
       throw this.handleError(error)
     }
   }

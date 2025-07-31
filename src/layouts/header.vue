@@ -3,7 +3,8 @@ import {
      Cctv , CircleUser, ChartNetwork,
      Grid2x2,MapPin,Undo2,Redo2,ZoomIn,
      Bookmark,Link,Group,SquareDashedMousePointer,
-     Scan,Waypoints,Settings,SquareArrowOutUpRight,Trash2 
+     Scan,Waypoints,Settings,SquareArrowOutUpRight,Trash2, 
+     LogOut
     } from 'lucide-vue-next';
 
 import { Button } from '@/components/ui/button'
@@ -27,6 +28,10 @@ import { Separator } from '@/components/ui/separator'
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu'
 import { Icon } from '@iconify/vue'
 import { useColorMode } from '@vueuse/core'
+
+//logout
+import { useAuth } from '@/composables/useAuth'
+const { logout } = useAuth()
 
 // Pass { disableTransition: false } to enable transitions
 const mode = useColorMode()
@@ -91,7 +96,7 @@ const mode = useColorMode()
                   <DropdownMenuItem @click="">
                     Edit Profile
                   </DropdownMenuItem>
-                  <DropdownMenuItem @click="">
+                  <DropdownMenuItem @click="logout">
                     Log Out
                   </DropdownMenuItem>
                 </DropdownMenuContent>
