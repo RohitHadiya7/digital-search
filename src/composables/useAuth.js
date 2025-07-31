@@ -58,7 +58,9 @@ export function useAuth() {
       loading.value = false
     }
   }
-
+//************************************************************** */
+//login with phone number and deviceId both.
+//************************************************************** */
   // Send login OTP
   const sendLoginOTP = async (phoneNumber, deviceId) => {
     loading.value = true
@@ -92,6 +94,40 @@ export function useAuth() {
       loading.value = false
     }
   }
+//************************************************************** */
+//login with phone number only
+//************************************************************** */
+const sendLoginOTPPhone = async (phoneNumber) => {
+  loading.value = true
+  error.value = null
+
+  try {
+    const result = await authService.sendLoginOTPPhone(phoneNumber)
+    return result
+  } catch (err) {
+    error.value = err.message
+    throw err
+  } finally {
+    loading.value = false
+  }
+}
+
+const verifyLoginOTPPhone = async (phoneNumber, otp) => {
+  loading.value = true
+  error.value = null
+
+  try {
+    const result = await authService.verifyLoginOTPPhone(phoneNumber, otp)
+    await loadUser()
+    router.push('/dashboard')
+    return result
+  } catch (err) {
+    error.value = err.message
+    throw err
+  } finally {
+    loading.value = false
+  }
+}
 
   // Logout
   const logout = async () => {
@@ -169,6 +205,8 @@ export function useAuth() {
     register,
     sendLoginOTP,
     verifyLoginOTP,
+    sendLoginOTPPhone,
+    verifyLoginOTPPhone,
     logout,
     loadUser,
     updateUser,

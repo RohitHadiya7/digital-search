@@ -37,7 +37,9 @@ class AuthService {
       throw this.handleError(error)
     }
   }
-
+//****************************************************************** */
+//login with phone number and deviceId both
+//****************************************************************** */
   // Send login OTP - for registered users only
   async sendLoginOTP(phoneNumber, deviceID) {
     try {
@@ -74,7 +76,45 @@ class AuthService {
     }
   }
 
-  // Logout user
+//****************************************************************** */
+//login with phone number only
+//****************************************************************** */
+async sendLoginOTPPhone(phoneNumber) {
+  try {
+    const response = await api.post('/v1/users/login-phoneNumber', {
+      phoneNumber
+    })
+    return response.data
+  } catch (error) {
+    throw this.handleError(error)
+  }
+}
+
+async verifyLoginOTPPhone(phoneNumber, otp) {
+  try {
+    const response = await api.post('/v1/users/verify-login-phoneNumber', {
+      phoneNumber,
+      otp
+    })
+
+    // Store token if login successful
+    if (response.data.token) {
+      localStorage.setItem('authToken', response.data.token)
+
+      // Reset session timeout
+      if (sessionService) {
+        sessionService.resetSession()
+      }
+    }
+
+    return response.data
+  } catch (error) {
+    throw this.handleError(error)
+  }
+}
+
+
+// Logout user
   async logout() {
     try {
       await api.get('/logout-user')

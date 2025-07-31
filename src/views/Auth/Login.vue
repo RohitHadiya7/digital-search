@@ -18,27 +18,65 @@ import {
   CardFooter
 } from '@/components/ui/card'
 
-const { sendLoginOTP, verifyLoginOTP, loading, error, clearError } = useAuth()
+const { sendLoginOTPPhone, verifyLoginOTPPhone, sendLoginOTP, verifyLoginOTP, loading, error, clearError } = useAuth()
 
 const step = ref(1)
 const phoneNumber = ref('')
-const deviceId = ref('')
+// const deviceId = ref('')
 const otpArray = ref([])
 
-const handleSendOtp = async () => {
-  console.log('Send OTP clicked!')
-  console.log('Phone:', phoneNumber.value)
-  console.log('Device ID:', deviceId.value)
+//***************************************************** */
+//login with phone number and deviceId both.
+//***************************************************** */
+// const handleSendOtp = async () => {
+//   console.log('Send OTP clicked!')
+//   console.log('Phone:', phoneNumber.value)
+//   console.log('Device ID:', deviceId.value)
   
-  if (!phoneNumber.value || !deviceId.value) {
-    alert('Please fill in all fields')
+//   if (!phoneNumber.value || !deviceId.value) {
+//     alert('Please fill in all fields')
+//     return
+//   }
+
+//   try {
+//     console.log('Calling sendLoginOTP...')
+//     await sendLoginOTP(phoneNumber.value, deviceId.value)
+//     console.log('OTP sent successfully!')
+//     step.value = 2
+//     clearError()
+//   } catch (err) {
+//     console.error('Failed to send OTP:', err)
+//     alert(`Error: ${err.message}`)
+//   }
+// }
+
+// const handleVerifyOtp = async () => {
+//   const fullOtp = otpArray.value.join('')
+  
+//   if (!fullOtp || !deviceId.value) {
+//     alert('Please fill in all fields')
+//     return
+//   }
+
+//   try {
+//     await verifyLoginOTP(deviceId.value, fullOtp)
+//     clearError()
+//   } catch (err) {
+//     console.error('Failed to verify OTP:', err)
+//   }
+// }
+
+//********************************************************** */
+// login with using only phone number.
+//********************************************************** */
+const handleSendOtp = async () => {
+  if (!phoneNumber.value) {
+    alert('Please enter your phone number')
     return
   }
 
   try {
-    console.log('Calling sendLoginOTP...')
-    await sendLoginOTP(phoneNumber.value, deviceId.value)
-    console.log('OTP sent successfully!')
+    await sendLoginOTPPhone(phoneNumber.value)
     step.value = 2
     clearError()
   } catch (err) {
@@ -49,14 +87,14 @@ const handleSendOtp = async () => {
 
 const handleVerifyOtp = async () => {
   const fullOtp = otpArray.value.join('')
-  
-  if (!fullOtp || !deviceId.value) {
-    alert('Please fill in all fields')
+
+  if (!fullOtp || !phoneNumber.value) {
+    alert('Please enter OTP and phone number')
     return
   }
 
   try {
-    await verifyLoginOTP(deviceId.value, fullOtp)
+    await verifyLoginOTPPhone(phoneNumber.value, fullOtp)
     clearError()
   } catch (err) {
     console.error('Failed to verify OTP:', err)
@@ -82,10 +120,10 @@ const handleVerifyOtp = async () => {
             <Label for="phone">Phone Number</Label>
             <Input id="phone" v-model="phoneNumber" placeholder="+91 xxxxxxxx" type="tel" required />
           </div>
-          <div class="grid gap-2">
+          <!-- <div class="grid gap-2">
             <Label for="device">Device ID</Label>
             <Input id="device" v-model="deviceId" placeholder="Device ID" type="text" required />
-          </div>
+          </div> -->
         </template>
 
         <!-- Step 2 -->
@@ -110,8 +148,10 @@ const handleVerifyOtp = async () => {
             </PinInput>
           </div>
           <div class="grid gap-2">
-            <Label for="device">Device ID</Label>
-            <Input id="device" v-model="deviceId" placeholder="Device ID" type="text" required />
+            <!-- <Label for="device">Device </Label>
+            <Input id="device" v-model="deviceId" placeholder="Device ID" type="text" required /> -->
+            <Label for="device">Phone Number </Label>
+            <Input id="device" v-model="phoneNumber" placeholder="+91 00xxxxxxxx" type="tel" required />
           </div>
         </template>
       </CardContent>
