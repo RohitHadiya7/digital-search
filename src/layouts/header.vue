@@ -37,9 +37,9 @@ const { logout } = useAuth()
 const mode = useColorMode()
 </script>
 <template>
-    <div class="w-full text-white flex  items-center justify-between bg-gray-700 px-2 pt-1">
+    <div class="w-full text-white flex  items-center justify-between bg-gray-700 p-2 pt-1">
         <div class="flex gap-2"><span><Cctv style="stroke-width: 2px;"/></span>Crime Wall</div>
-        <div>
+        <!-- <div>
             <Tabs default-value="Graph" class="w-[350px]">
                 <TabsList class="grid w-full grid-cols-3 bg-gray-900">
                   <TabsTrigger value="Graph" class="hover: cursor-pointer text-gray-400">
@@ -59,7 +59,7 @@ const mode = useColorMode()
                 <TabsContent value="Map">
                 </TabsContent>
             </Tabs>
-        </div>
+        </div> -->
         <div class="flex gap-2">
             <!-- theme dropdown -->
             <DropdownMenu>
@@ -90,12 +90,12 @@ const mode = useColorMode()
                     </Button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="end">
-                  <DropdownMenuItem @click="">
+                  <!-- <DropdownMenuItem @click="">
                     User Profile
                   </DropdownMenuItem>
                   <DropdownMenuItem @click="">
                     Edit Profile
-                  </DropdownMenuItem>
+                  </DropdownMenuItem> -->
                   <DropdownMenuItem @click="logout">
                     Log Out
                   </DropdownMenuItem>
@@ -103,8 +103,8 @@ const mode = useColorMode()
             </DropdownMenu>
         </div>
     </div>
-    <div class="w-full flex  items-center justify-center py-4 bg-black">
-        <!-- icon buttons -->
+    <!-- temporary hidden -->
+    <!-- <div class="w-full flex  items-center justify-center py-4 bg-black">
         <div class="flex justify-center items-center">
         <div class="flex h-5 items-center space-x-4 text-sm">
             <div class="flex gap-2">
@@ -159,5 +159,5 @@ const mode = useColorMode()
             </div>
         </div>
         </div>
-    </div>
+    </div> -->
 </template>

@@ -119,7 +119,7 @@ const verifyLoginOTPPhone = async (phoneNumber, otp) => {
   try {
     const result = await authService.verifyLoginOTPPhone(phoneNumber, otp)
     await loadUser()
-    router.push('/dashboard')
+    router.push('/gallery')
     return result
   } catch (err) {
     error.value = err.message

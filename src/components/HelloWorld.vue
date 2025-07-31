@@ -17,9 +17,9 @@ import {
     </header>
     <SidebarProvider>
       <div class="flex flex-1">
-        <AppSidebar />
+        <!-- <AppSidebar /> -->
         <SidebarInset class="flex-1">
-          <div class=" mx-4 my-2 h-[calc(100vh-10rem)] overflow-auto border rounded">
+          <div class=" mx-4 my-2 h-[calc(100vh-7rem)] overflow-auto border rounded">
             <router-view />
           </div>
           <div class="px-3">
