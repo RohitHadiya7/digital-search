@@ -119,6 +119,7 @@ async verifyLoginOTPPhone(phoneNumber, otp) {
     try {
       await api.post('/v1/logOut');
       localStorage.removeItem('authToken')
+      localStorage.removeItem('phoneNumber')
       return { success: true }
     } catch (error) {
       // localStorage.removeItem('authToken')
@@ -129,7 +130,7 @@ async verifyLoginOTPPhone(phoneNumber, otp) {
   // Get current user
   async getCurrentUser() {
     try {
-      const response = await api.get('/api/users/me')
+      const response = await api.get('/v1/users/me')
       return response.data
     } catch (error) {
       throw this.handleError(error)

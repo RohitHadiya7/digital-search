@@ -118,6 +118,7 @@ const verifyLoginOTPPhone = async (phoneNumber, otp) => {
 
   try {
     const result = await authService.verifyLoginOTPPhone(phoneNumber, otp)
+    localStorage.setItem('phoneNumber',phoneNumber)
     await loadUser()
     router.push('/gallery')
     return result

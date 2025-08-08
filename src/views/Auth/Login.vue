@@ -150,8 +150,8 @@ const handleVerifyOtp = async () => {
           <div class="grid gap-2">
             <!-- <Label for="device">Device </Label>
             <Input id="device" v-model="deviceId" placeholder="Device ID" type="text" required /> -->
-            <Label for="device">Phone Number </Label>
-            <Input id="device" v-model="phoneNumber" placeholder="+91 00xxxxxxxx" type="tel" required />
+            <!-- <Label for="device">Phone Number </Label> -->
+            <!-- <Input id="device" v-model="phoneNumber" placeholder="+91 00xxxxxxxx" type="tel" required /> -->
           </div>
         </template>
       </CardContent>
